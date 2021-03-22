@@ -143,6 +143,8 @@ app_license = "MIT"
 #
 # auto_cancel_exempted_doctypes = ["Auto Repeat"]
 
+#Fixtures
+fixtures = ['Custom Field']
 
 # User Data Protection
 # --------------------
