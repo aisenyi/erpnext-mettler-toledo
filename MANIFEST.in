@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include serial_device *.css
+recursive-include serial_device *.csv
+recursive-include serial_device *.html
+recursive-include serial_device *.ico
+recursive-include serial_device *.js
+recursive-include serial_device *.json
+recursive-include serial_device *.md
+recursive-include serial_device *.png
+recursive-include serial_device *.py
+recursive-include serial_device *.svg
+recursive-include serial_device *.txt
+recursive-exclude serial_device *.pyc
