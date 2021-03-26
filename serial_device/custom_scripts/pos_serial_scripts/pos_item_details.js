@@ -20,7 +20,8 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 			<div class="discount-section"></div>
 			<div class="form-container"></div>
 			<div>
-				<button onclick='sendData()'>Get Weightttttt</button>
+				<button id="sendData">Get Weightttttt</button>
+				<button id="closeCurrentPort">Close Connection</button>
 			</div>`
 		)
 		console.log({"wrapper": window.something});
@@ -33,6 +34,10 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 			consoloe.log("Initialize called");
 			this.realodDevices();
 		});
+		
+		this.$component.on('click', '#sendData', () => {
+			this.sendData();
+		});
 		this.$item_name = this.$component.find('.item-name');
 		this.$item_description = this.$component.find('.item-desc');
 		this.$item_price = this.$component.find('.item-price');
@@ -41,13 +46,28 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 		this.$dicount_section = this.$component.find('.discount-section');
 		
 		//Initialize connection with serial device
+		window.serialPort.setOnDataReceivedCallback(this.onNewData);
+		window.port = chrome.runtime.connect(window.extensionId);
+		this.add_listener();
+		
+		//Get weight
+		this.$component.on('click', '#sendData', () => {
+			this.sendData();
+		});
+		
+		this.$component.on('click', '#closeCurrentPort', () => {
+			this.closeCurrentPort();
+		});
+	}
+	
+	add_listener(){
 		var me = this;
-		this.port = chrome.runtime.connect(window.extensionId);
-		this.port.onMessage.addListener(
+		window.port.onMessage.addListener(
 			function(msg) {
-			  console.log(msg);
+			  console.log({"msg":msg});
 			  if(msg.header === "guid"){
-				me.portGUID = msg.guid;
+				window.portGUID = msg.guid;
+				me.openSelectedPort();
 			  }
 			  else if(msg.header === "serialdata"){
 				me.onNewData(new Uint8Array(msg.data).buffer);
@@ -60,18 +80,6 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 			  }
 			}
 		);
-		
-		//Open connection with serial device
-		this.openSelectedPort();
-		
-		//Get weight
-		this.$component.on('click', '#sendData', () => {
-			this.sendData();
-		});
-		
-		this.$component.on('click', '#closeCurrentPort', () => {
-			this.closeCurrentPort();
-		});
 	}
 	
 	closeCurrentPort(){
@@ -116,7 +124,7 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
             parityBit: "even",
             stopBits: "one"
           },
-		  this.portGUID,
+		  window.portGUID,
           function(response){
             console.log(response);
             if(response.result === "ok"){

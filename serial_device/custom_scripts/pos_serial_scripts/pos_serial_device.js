@@ -87,7 +87,7 @@ erpnext.PointOfSale.SerialPort = function (){
   * Callback is a function to call to handle the app result.
   */
   this.openPort = function(portInfo, iportGUID, callBack){
-    console.log(portGUID);
+    console.log({"portguid": iportGUID});
     chrome.runtime.sendMessage(extensionId,
       {
         cmd: "open",
