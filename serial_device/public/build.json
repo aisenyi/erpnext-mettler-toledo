@@ -9,6 +9,7 @@
 		"pos_assets/pos_payment.js",
 		"pos_assets/pos_past_order_list.js",
 		"pos_assets/pos_past_order_summary.js",
-		"pos_assets/pos_controller.js"
+		"pos_assets/pos_controller.js",
+		"custom_scripts/pos_serial_scripts/pos_controller.js"
 	]
 }

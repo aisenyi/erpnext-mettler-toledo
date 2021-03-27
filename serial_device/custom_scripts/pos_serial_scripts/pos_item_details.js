@@ -21,7 +21,6 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 			<div class="form-container"></div>
 			<div>
 				<button id="sendData">Get Weightttttt</button>
-				<button id="closeCurrentPort">Close Connection</button>
 			</div>`
 		)
 		console.log({"wrapper": window.something});
@@ -53,10 +52,6 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 		//Get weight
 		this.$component.on('click', '#sendData', () => {
 			this.sendData();
-		});
-		
-		this.$component.on('click', '#closeCurrentPort', () => {
-			this.closeCurrentPort();
 		});
 	}
 	
@@ -118,11 +113,11 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 	openSelectedPort(){
         window.serialPort.openPort(
           {
-            portName: 'COM1',
-            bitrate: 9600,
-            dataBits: "seven",
-            parityBit: "even",
-            stopBits: "one"
+            portName: window.portName,
+            bitrate: window.bitrate,
+            dataBits: window.dataBits,
+            parityBit: window.parityBit,
+            stopBits: window.stopBits
           },
 		  window.portGUID,
           function(response){

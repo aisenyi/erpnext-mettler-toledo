@@ -8,10 +8,13 @@ frappe.pages['point-of-sale'].on_page_load = function(wrapper) {
 	});
 
 	frappe.require('assets/js/point-of-sale.min.js', function() {
-		window.extensionId = "lhphimlabkfchifcfjagjihkjpdcgdgi";
-		window.serialPort = new erpnext.PointOfSale.SerialPort();
+		//window.extensionId = "lhphimlabkfchifcfjagjihkjpdcgdgi";
+		window.serialPort = new erpnext.PointOfSale.SerialPort();		
 		wrapper.pos = new erpnext.PointOfSale.Controller(wrapper);
 		window.cur_pos = wrapper.pos;
+		setTimeout(function(){
+			console.log({"wrapper": frappe.pages['point-of-sale']});
+		}, 5000);
 	});
 };
 

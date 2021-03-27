@@ -8,7 +8,7 @@ erpnext.PointOfSale.SerialPort = function (){
   /**
   * Initialize the comunication with the app.
   */
-  var port = chrome.runtime.connect(extensionId);
+  //var port = chrome.runtime.connect(window.extensionId);
   console.log("I got called");
 
   /**
@@ -88,7 +88,7 @@ erpnext.PointOfSale.SerialPort = function (){
   */
   this.openPort = function(portInfo, iportGUID, callBack){
     console.log({"portguid": iportGUID});
-    chrome.runtime.sendMessage(extensionId,
+    chrome.runtime.sendMessage(window.extensionId,
       {
         cmd: "open",
         portGUID: iportGUID,
@@ -109,7 +109,7 @@ erpnext.PointOfSale.SerialPort = function (){
   * Callback is a function to call to handle the app result.
   */
   this.closePort = function(callBack){
-    chrome.runtime.sendMessage(extensionId,
+    chrome.runtime.sendMessage(window.extensionId,
       {
         cmd: "close",
         connectionId: serialConnectionId
@@ -130,7 +130,7 @@ erpnext.PointOfSale.SerialPort = function (){
   * data -> Array which contains the bytes to send
   */
   this.write = function(data, callBack){
-    chrome.runtime.sendMessage(extensionId,
+    chrome.runtime.sendMessage(window.extensionId,
       {
         cmd: "write",
         connectionId: serialConnectionId,
@@ -161,7 +161,7 @@ erpnext.PointOfSale.SerialPort = function (){
 * Callback is a function to call to handle the app result.
 */
 function getDevicesList(callBack){
-  chrome.runtime.sendMessage(extensionId, {cmd: "list"}, callBack);
+  chrome.runtime.sendMessage(window.extensionId, {cmd: "list"}, callBack);
 }
 
 /**
@@ -169,7 +169,7 @@ function getDevicesList(callBack){
 * If it's installed return result: "ok" and the current version
 */
 function isExtensionInstalled(callback){
-   chrome.runtime.sendMessage(extensionId, { cmd: "installed" },
+   chrome.runtime.sendMessage(window.extensionId, { cmd: "installed" },
      function (response) {
        if (response){
         callback(true);
