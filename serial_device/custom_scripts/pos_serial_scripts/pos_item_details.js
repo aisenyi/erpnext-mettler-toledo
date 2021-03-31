@@ -50,6 +50,8 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 		this.add_listener();
 		
 		//Get weight
+		this.old_weight = 0;
+		setInterval(this.sendData(), 300)
 		this.$component.on('click', '#sendData', () => {
 			this.sendData();
 		});
@@ -144,7 +146,8 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 		if(isNaN(weight)){
 			
 		}
-		else if(weight > 0){
+		else if(weight > 0 && weight != this.old_weight){
+			this.old_weight = weight;
 			this.qty_control.set_value(weight);
 			//$('qty_control').value(weight);
 			//$('#output').append(weight);
