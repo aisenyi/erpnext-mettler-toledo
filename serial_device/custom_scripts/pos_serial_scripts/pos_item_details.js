@@ -51,10 +51,40 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 		
 		//Get weight
 		this.old_weight = 0;
-		setInterval(this.sendData(), 300)
 		this.$component.on('click', '#sendData', () => {
 			this.sendData();
 		});
+	}
+	
+	toggle_item_details_section(item) {
+		const { item_code, batch_no, uom } = this.current_item;
+		const item_code_is_same = item && item_code === item.item_code;
+		const batch_is_same = item && batch_no == item.batch_no;
+		const uom_is_same = item && uom === item.uom;
+
+		this.item_has_changed = !item ? false : item_code_is_same && batch_is_same && uom_is_same ? false : true;
+
+		this.events.toggle_item_selector(this.item_has_changed);
+		this.toggle_component(this.item_has_changed);
+
+		if (this.item_has_changed) {
+			this.doctype = item.doctype;
+			this.item_meta = frappe.get_meta(this.doctype);
+			this.name = item.name;
+			this.item_row = item;
+			this.currency = this.events.get_frm().doc.currency;
+
+			this.current_item = { item_code: item.item_code, batch_no: item.batch_no, uom: item.uom };
+
+			this.render_dom(item);
+			this.render_discount_dom(item);
+			this.render_form(item);
+			//
+			setInterval(this.sendData(), 300);
+		} else {
+			this.validate_serial_batch_item();
+			this.current_item = {};
+		}
 	}
 	
 	add_listener(){
@@ -144,13 +174,17 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 		var weight = parseFloat(str)
 		console.log(weight);
 		if(isNaN(weight)){
-			
+			//setTimeout(this.sendData(), 500);
 		}
-		else if(weight > 0 && weight != this.old_weight){
-			this.old_weight = weight;
-			this.qty_control.set_value(weight);
-			//$('qty_control').value(weight);
-			//$('#output').append(weight);
+		else{ 
+			if(weight > 0 && weight != this.old_weight){
+				this.old_weight = weight;
+				this.qty_control.set_value(weight);
+				
+				//$('qty_control').value(weight);
+				//$('#output').append(weight);
+			}
+			setTimeout(this.sendData(), 200);
 		}
 	}
 }
