@@ -47,12 +47,10 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 		//Initialize connection with serial device
 		window.serialPort.setOnDataReceivedCallback(this.onNewData);
 		window.port = chrome.runtime.connect(window.extensionId);
-		this.add_listener();
+		window.add_listener();
 		
-		//Get weight
-		this.old_weight = 0;
 		this.$component.on('click', '#sendData', () => {
-			this.sendData();
+			window.sendData();
 		});
 	}
 	
@@ -80,6 +78,9 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 			this.render_discount_dom(item);
 			this.render_form(item);
 			
+			//Set initial weight for weigh scale
+			window.old_weight = 0;
+			window.is_item_details_open = true;
 			window.serialPort.getWeight(
 				function(response){
 					console.log(response);
@@ -88,107 +89,6 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 		} else {
 			this.validate_serial_batch_item();
 			this.current_item = {};
-		}
-	}
-	
-	add_listener(){
-		var me = this;
-		window.port.onMessage.addListener(
-			function(msg) {
-			  console.log({"msg":msg});
-			  if(msg.header === "guid"){
-				window.portGUID = msg.guid;
-				me.openSelectedPort();
-			  }
-			  else if(msg.header === "serialdata"){
-				me.onNewData(new Uint8Array(msg.data).buffer);
-				/*if(onDataReceivedCallback !== undefined){
-				  onDataReceivedCallback(new Uint8Array(msg.data).buffer);
-				}*/
-			  }
-			  else if(msg.header === "serialerror"){
-				me.onErrorReceivedCallback(msg.error);
-			  }
-			}
-		);
-	}
-	
-	closeCurrentPort(){
-        window.serialPort.closePort(
-          function(response){
-            console.log(response);
-            if(response.result === "ok"){
-              //Do something
-            }
-            else{
-              alert(response.error);
-            }
-          }
-        );
-    }
-	
-	sendData(){
-        var input = this.stringToArrayBuffer("W");
-
-        window.serialPort.write(input,
-          function(response){
-            console.log(response);
-          }
-        );
-    }
-
-    stringToArrayBuffer(string){
-        var buffer = new ArrayBuffer(string.length);
-        var dv = new DataView(buffer);
-        for(var i = 0; i < string.length; i++){
-          dv.setUint8(i, string.charCodeAt(i));
-        }
-        return dv.buffer;
-    }
-	
-	openSelectedPort(){
-        window.serialPort.openPort(
-          {
-            portName: window.portName,
-            bitrate: window.bitrate,
-            dataBits: window.dataBits,
-            parityBit: window.parityBit,
-            stopBits: window.stopBits
-          },
-		  window.portGUID,
-          function(response){
-            console.log(response);
-            if(response.result === "ok"){
-              //Do something
-              alert("Weigh device connected!");
-            }
-            else{
-              alert(response.error);
-            }
-          }
-        );
-    }
-	
-	onNewData(data){
-		var str = "";
-        var dv = new DataView(data);
-        for(var i = 0; i < dv.byteLength; i++){
-            str = str.concat(String.fromCharCode(dv.getUint8(i, true)));
-        }
-		var weight = parseFloat(str)
-		console.log(weight);
-		if(isNaN(weight)){
-			//setTimeout(this.sendData(), 500);
-		}
-		else{ 
-			if(weight > 0 && weight != this.old_weight){
-				this.old_weight = weight;
-				this.qty_control.set_value(weight);
-				
-				//$('qty_control').value(weight);
-				//$('#output').append(weight);
-			}
-			setTimeout(this.sendData(), 200);
 		}
 	}
 }
