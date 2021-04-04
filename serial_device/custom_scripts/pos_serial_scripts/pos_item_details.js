@@ -79,8 +79,12 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 			this.render_dom(item);
 			this.render_discount_dom(item);
 			this.render_form(item);
-			//
-			setInterval(this.sendData(), 300);
+			
+			window.serialPort.getWeight(
+				function(response){
+					console.log(response);
+				}
+			);
 		} else {
 			this.validate_serial_batch_item();
 			this.current_item = {};
