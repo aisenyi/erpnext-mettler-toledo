@@ -47,7 +47,7 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 		//Initialize connection with serial device
 		window.serialPort.setOnDataReceivedCallback(this.onNewData);
 		window.port = chrome.runtime.connect(window.extensionId);
-		window.add_listener();
+		this.add_listener();
 		
 		this.$component.on('click', '#sendData', () => {
 			window.sendData();
@@ -81,14 +81,59 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 			//Set initial weight for weigh scale
 			window.old_weight = 0;
 			window.is_item_details_open = true;
-			window.serialPort.getWeight(
+			window.setTimeout(window.serialPort.getWeight(
 				function(response){
 					console.log(response);
 				}
-			);
+			)), 50000;
 		} else {
 			this.validate_serial_batch_item();
 			this.current_item = {};
+		}
+	}
+	
+	add_listener(){
+		var me = this;
+		window.port.onMessage.addListener(
+			function(msg) {
+			  console.log({"msg":msg});
+			  if(msg.header === "guid"){
+				window.portGUID = msg.guid;
+				window.openSelectedPort();
+			  }
+			  else if(msg.header === "serialdata"){
+				me.onNewData(new Uint8Array(msg.data).buffer);
+				/*if(onDataReceivedCallback !== undefined){
+				  onDataReceivedCallback(new Uint8Array(msg.data).buffer);
+				}*/
+			  }
+			  else if(msg.header === "serialerror"){
+				window.onErrorReceivedCallback(msg.error);
+			  }
+			}
+		);
+	}
+	
+	onNewData(data){
+		var str = "";
+		var dv = new DataView(data);
+		for(var i = 0; i < dv.byteLength; i++){
+			str = str.concat(String.fromCharCode(dv.getUint8(i, true)));
+		}
+		var weight = parseFloat(str)
+		console.log(weight);
+		if(isNaN(weight)){
+			
+		}
+		else{ 
+			if(weight > 0 && weight != window.old_weight){
+				window.old_weight = weight;
+				this.qty_control.set_value(weight);
+				
+				//$('qty_control').value(weight);
+				//$('#output').append(weight);
+			}
+			//setTimeout(window.sendData(), 200);
 		}
 	}
 }

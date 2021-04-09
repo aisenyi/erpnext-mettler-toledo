@@ -86,7 +86,11 @@ erpnext.PointOfSale.Controller = class extends erpnext.PointOfSale.Controller{
 					this.item_details.toggle_item_details_section(undefined);
 					this.cart.prev_action = undefined;
 					this.cart.toggle_item_highlight();
-					window.is_item_details_open = false;
+					window.serialPort.stopWeight(
+						function(response){
+							console.log(response);
+						}
+					);
 				},
 				get_available_stock: (item_code, warehouse) => this.get_available_stock(item_code, warehouse)
 			}

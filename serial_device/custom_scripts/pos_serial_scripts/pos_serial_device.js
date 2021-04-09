@@ -149,6 +149,46 @@ erpnext.PointOfSale.SerialPort = function (){
       }
     );
   }
+  
+  this.getWeight = function(data, callBack){
+    chrome.runtime.sendMessage(window.extensionId,
+      {
+        cmd: "getweight",
+        connectionId: serialConnectionId
+      },
+      function(response){
+        if(response.result === "ok"){
+          if(response.sendInfo.error !== undefined){
+            if(response.sendInfo.error === "disconnected" || response.sendInfo.error === "system_error"){
+              isSerialPortOpen = false;
+              closePort(function(){});
+            }
+          }
+        }
+        callBack(response);
+      }
+    );
+  }
+  
+  this.stopWeight = function(data, callBack){
+    chrome.runtime.sendMessage(window.extensionId,
+      {
+        cmd: "stopweight",
+        connectionId: serialConnectionId
+      },
+      function(response){
+        if(response.result === "ok"){
+          if(response.sendInfo.error !== undefined){
+            if(response.sendInfo.error === "disconnected" || response.sendInfo.error === "system_error"){
+              isSerialPortOpen = false;
+              closePort(function(){});
+            }
+          }
+        }
+        callBack(response);
+      }
+    );
+  }
 }
 
 /**
