@@ -52,10 +52,10 @@ frappe.pages['point-of-sale'].on_page_load = function(wrapper) {
 				console.log(response);
 				if(response.result === "ok"){
 				  //Do something
-				  alert("Weigh device connected!");
+				  frappe.msgprint("Weigh device connected!");
 				}
 				else{
-				  alert(response.error);
+				  frappe.msgpring("There was an error connecting to the weigh device: " + response.error);
 				}
 			  }
 			);
@@ -79,7 +79,6 @@ frappe.pages['point-of-sale'].refresh = function(wrapper) {
 				return null;
 			  }
 			  else{
-				alert(response.error);
 				return false;
 			  }
 			}

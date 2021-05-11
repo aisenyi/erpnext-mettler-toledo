@@ -7,9 +7,13 @@
 		"custom_scripts/pos_serial_scripts/pos_item_details.js",
 		"pos_assets/pos_number_pad.js",
 		"pos_assets/pos_payment.js",
+		"custom_scripts/pos_serial_scripts/pos_payment.js",
 		"pos_assets/pos_past_order_list.js",
 		"pos_assets/pos_past_order_summary.js",
 		"pos_assets/pos_controller.js",
 		"custom_scripts/pos_serial_scripts/pos_controller.js"
+	],
+	"js/pos-mettler-toledo.min.js": [
+		"custom_scripts/pos_serial_scripts/pos_mettler_toledo.js"
 	]
 }

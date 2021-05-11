@@ -1,5 +1,5 @@
 erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails {
-	async init_child_components(){
+	init_child_components() {
 		this.$component.html(
 			`<div class="item-details-header">
 				<div class="label">Item Details</div>
@@ -33,33 +33,18 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 		
 		//Initialize connection with serial device
 		if(window.enable_weigh_scale == 1){
-			//Check if the browser supports serial device connection
-			window.checkPort(false);
-			if(typeof(window.mettlerWorker) == "undefined"){
-				var me = this;
-				window.mettlerWorker = new Worker("/assets/js/pos-mettler-toledo.min.js");
-				window.mettlerWorker.onmessage = function(e){
-					console.log(e);
-					if(e.data.message == "No Port"){
-						window.checkPort(true);
-					}
-					else if(e.data.message == "weight" && window.is_item_details_open){
-						window.weight = e.data.weight;
-						me.qty_control.set_value(e.data.weight);
-					}
-				}
-				window.mettlerWorker.postMessage({"command": "connect"});
-			}
+			window.serialPort.setOnDataReceivedCallback(this.onNewData);
+			window.port = chrome.runtime.connect(window.extensionId);
+			this.add_listener();
 			
 			this.$component.on('click', '#sendData', () => {
-				//window.sendData();
+				window.sendData();
 			});
 			$('#sendData').show();
 		}
 	}
 	
 	toggle_item_details_section(item) {
-		window.is_item_details_open = true;
 		const { item_code, batch_no, uom } = this.current_item;
 		const item_code_is_same = item && item_code === item.item_code;
 		const batch_is_same = item && batch_no == item.batch_no;
@@ -84,13 +69,57 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 			this.render_form(item);
 			
 			//Set initial weight for weigh scale
-			window.old_weight = 0;			
+			if(window.enable_weigh_scale == 1){
+				window.old_weight = 0;
+				window.serialPort.getWeight(
+					function(response){
+					}
+				);
+			}
 		} else {
 			this.validate_serial_batch_item();
 			this.current_item = {};
 		}
-		if(window.enable_weigh_scale == 1){
-			window.mettlerWorker.postMessage({"command": "start"});
+	}
+	
+	add_listener(){
+		var me = this;
+		window.port.onMessage.addListener(
+			function(msg) {
+			  if(msg.header === "guid"){
+				window.portGUID = msg.guid;
+				window.openSelectedPort();
+			  }
+			  else if(msg.header === "serialdata"){
+				me.onNewData(new Uint8Array(msg.data).buffer);
+				/*if(onDataReceivedCallback !== undefined){
+				  onDataReceivedCallback(new Uint8Array(msg.data).buffer);
+				}*/
+			  }
+			  else if(msg.header === "serialerror"){
+				window.onErrorReceivedCallback(msg.error);
+			  }
+			}
+		);
+	}
+	
+	onNewData(data){
+		var str = "";
+		var dv = new DataView(data);
+		for(var i = 0; i < dv.byteLength; i++){
+			str = str.concat(String.fromCharCode(dv.getUint8(i, true)));
+		}
+		var weight = parseFloat(str)
+		console.log(weight);
+		if(isNaN(weight)){
+			
+		}
+		else{ 
+			if(weight > 0 && weight != window.old_weight){
+				window.old_weight = weight;
+				this.qty_control.set_value(weight);
+				console.log(weight);
+			}
 		}
 	}
 }

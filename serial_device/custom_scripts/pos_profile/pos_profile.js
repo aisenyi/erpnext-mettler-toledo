@@ -3,6 +3,30 @@ frappe.ui.form.on('POS Profile', {
 		if(frm.doc.enable_weigh_scale){
 			frm.events.load_ports(frm);
 		}
+		frm.events.show_hide_fields(frm);
+	},
+	
+	validate: function(frm){
+		if(frm.doc.enable_weigh_scale){
+			var serial_fields = ['serial_extension_id', 'port', 'bit_rate', 'data_bit', 'parity', 'stop_bit'];
+			serial_fields.forEach(function(field){
+				if(!frm.doc[field]){
+					frappe.throw('Please enter all fields in the Weight Device settings section');
+					frappe.validated = false;
+				}
+			});
+		}
+	},
+	
+	show_hide_fields: function(frm){
+		var display = false;
+		if(frm.doc.enable_weigh_scale){
+			display = true;
+		}
+		var serial_fields = ['serial_extension_id', 'port', 'bit_rate', 'data_bit', 'parity', 'stop_bit'];
+		serial_fields.forEach(function(field){
+			cur_frm.toggle_display(field, display);
+		});
 	},
 	
 	load_ports: function(frm){
@@ -29,5 +53,9 @@ frappe.ui.form.on('POS Profile', {
 	
 	serial_extension_id: function(frm){
 		frm.events.load_ports(frm);
+	},
+	
+	enable_weigh_scale: function(frm){
+		frm.events.show_hide_fields(frm);
 	}
 });

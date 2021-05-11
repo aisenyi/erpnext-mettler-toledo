@@ -12,7 +12,14 @@ erpnext.PointOfSale.Controller = class extends erpnext.PointOfSale.Controller{
 		});
 
 		frappe.db.get_doc("POS Profile", this.pos_profile).then((profile) => {
+			//serial device connection settings
 			window.enable_weigh_scale = profile.enable_weigh_scale;
+			window.extensionId = profile.serial_extension_id;
+			window.portName = profile.port;
+			window.bitrate = profile.bit_rate;
+			window.dataBits = profile.data_bit.toLowerCase();
+			window.parityBit = profile.parity.toLowerCase();
+			window.stopBits = profile.stop_bit.toLowerCase();
 			Object.assign(this.settings, profile);
 			this.settings.customer_groups = profile.customer_groups.map(group => group.customer_group);
 			this.make_app();
@@ -81,8 +88,11 @@ erpnext.PointOfSale.Controller = class extends erpnext.PointOfSale.Controller{
 					this.cart.prev_action = undefined;
 					this.cart.toggle_item_highlight();
 					if(window.enable_weigh_scale == 1){
-						window.is_item_details_open = false;
-						window.mettlerWorker.postMessage({"command": "stop"});
+						window.serialPort.stopWeight(
+							function(response){
+								console.log(response);
+							}
+						);
 					}
 				},
 				get_available_stock: (item_code, warehouse) => this.get_available_stock(item_code, warehouse)
@@ -103,7 +113,11 @@ erpnext.PointOfSale.Controller = class extends erpnext.PointOfSale.Controller{
 			})
 			.catch(e => console.log(e));
 		if(window.enable_weigh_scale == 1){
-			window.is_item_details_open = false;
+			window.serialPort.stopWeight(
+				function(response){
+					console.log(response);
+				}
+			);
 		}
 	}
 }
