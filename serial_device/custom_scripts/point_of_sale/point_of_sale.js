@@ -6,7 +6,7 @@ frappe.pages['point-of-sale'].on_page_load = function(wrapper) {
 		title: __('Point of Sale'),
 		single_column: true
 	});
-
+	window.pos_loaded = true;
 	frappe.require('assets/js/point-of-sale.min.js', function() {
 		wrapper.pos = new erpnext.PointOfSale.Controller(wrapper);
 		window.cur_pos = wrapper.pos;
@@ -34,6 +34,19 @@ frappe.pages['point-of-sale'].on_page_load = function(wrapper) {
 			else{
 				frappe.msgprint("Your browser does not support serial device connection. Please switch to a supported browser to connect to your weigh device");
 			}
+		}
+	});
+	
+	$(document).on('page-change', function(){
+		console.log("page changed");
+		var urlParts = window.location.pathname.split('/');
+		var page = urlParts.pop() || urlParts.pop();
+		console.log(page);
+		if(page == "point-of-sale" && !window.pos_loaded){
+			window.location.reload();
+		}
+		else if(page == "point-of-sale" && window.pos_loaded){
+			window.pos_loaded = false;
 		}
 	});
 };
