@@ -45,7 +45,11 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 					}
 					else if(e.data.message == "weight" && window.is_item_details_open){
 						window.weight = e.data.weight;
-						me.qty_control.set_value(e.data.weight);
+						//Wait for 300ms before changing value as a hack to circumvent a bug(?)
+						//where the device sends incorrect weight
+						setTimeout(function(){
+							me.qty_control.set_value(window.weight);
+						}, 300);
 					}
 				}
 				window.mettlerWorker.postMessage({"command": "connect"});
@@ -54,7 +58,7 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 			this.$component.on('click', '#sendData', () => {
 				//window.sendData();
 			});
-			$('#sendData').show();
+			//$('#sendData').show();
 		}
 	}
 	
