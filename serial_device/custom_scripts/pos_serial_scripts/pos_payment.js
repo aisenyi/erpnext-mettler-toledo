@@ -6,11 +6,9 @@ erpnext.PointOfSale.Payment = class extends erpnext.PointOfSale.Payment{
 		this.render_payment_section();
 		
 		if(window.enable_weigh_scale == 1){
-			window.serialPort.stopWeight(
-				function(response){
-					//console.log(response);
-				}
-			);
+			if(typeof(window.mettlerWorker) != "undefined"){
+				window.mettlerWorker.postMessage({"command": "stop"});
+			}
 		}
 	}
 }
