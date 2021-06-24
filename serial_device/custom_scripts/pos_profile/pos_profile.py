@@ -1,1 +1,0 @@
-def onload(self, method):

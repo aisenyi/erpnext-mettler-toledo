@@ -23,7 +23,6 @@ erpnext.PointOfSale.Toledo.getWeight = async function(){
 }*/
 
 onmessage = function(message){
-    console.log(message);
 	if(message.data.command == "connect"){
 		connectPort();
 	}
@@ -44,8 +43,6 @@ async function connectPort(){
 	if(ports.length > 0){
 		
 		port = ports[0];
-		console.log({"port": port});
-		console.log({"info": port.getInfo()});
 		var stop = false;
 		try{
 			await port.open({baudRate: 9600, dataBits: 7, parity: "even", stopBits: 1});
@@ -95,8 +92,6 @@ async function startWeight(){
 							}
 							var newWeight = parseFloat(strWeight);
 							if(newWeight != weight && !isNaN(newWeight)){
-								console.log({"newWeight": newWeight});
-								console.log({"newASCII": value});
 								weight = newWeight;
 								postMessage({
 									"message": "weight",

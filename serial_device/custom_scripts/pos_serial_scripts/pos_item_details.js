@@ -39,7 +39,6 @@ erpnext.PointOfSale.ItemDetails = class extends erpnext.PointOfSale.ItemDetails 
 				var me = this;
 				window.mettlerWorker = new Worker("/assets/js/pos-mettler-toledo.min.js");
 				window.mettlerWorker.onmessage = function(e){
-					console.log(e);
 					if(e.data.message == "No Port"){
 						window.checkPort(true);
 					}

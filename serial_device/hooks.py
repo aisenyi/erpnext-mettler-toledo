@@ -33,7 +33,7 @@ app_license = "MIT"
 page_js = {"point-of-sale" : "custom_scripts/point_of_sale/point_of_sale.js"}
 
 # include js in doctype views
-doctype_js = {"POS Profile" : "custom_scripts/pos_profile/pos_profile.js"}
+# doctype_js = {"POS Profile" : "custom_scripts/pos_profile/pos_profile.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -144,7 +144,7 @@ doctype_js = {"POS Profile" : "custom_scripts/pos_profile/pos_profile.js"}
 # auto_cancel_exempted_doctypes = ["Auto Repeat"]
 
 #Fixtures
-fixtures = ['Custom Field']
+#fixtures = ['Custom Field']
 
 # User Data Protection
 # --------------------

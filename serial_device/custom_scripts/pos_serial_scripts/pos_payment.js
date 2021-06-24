@@ -8,7 +8,7 @@ erpnext.PointOfSale.Payment = class extends erpnext.PointOfSale.Payment{
 		if(window.enable_weigh_scale == 1){
 			window.serialPort.stopWeight(
 				function(response){
-					console.log(response);
+					//console.log(response);
 				}
 			);
 		}
